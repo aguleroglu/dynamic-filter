@@ -1,0 +1,196 @@
+<html>
+
+<head>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+        crossorigin="anonymous">
+
+</head>
+
+<body>
+    <div class="navbar navbar-dark bg-dark box-shadow">
+        <div class="container d-flex justify-content-between">
+            <a href="#" class="navbar-brand d-flex align-items-center">
+                <strong>Album</strong>
+            </a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarHeader" aria-controls="navbarHeader"
+                aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+        </div>
+    </div>
+    <div class="container">
+        <div class="pt-4" id="vue-app">
+            <dynamic-filter></dynamic-filter>
+        </div>
+    </div>
+    <script type="x-template" id="dynamic-filter">
+        <div class="row">
+            <div class="col-sm-4">
+                    <div class="card" v-for="filter in filters">
+                        <div class="card-header">
+                            {{filter.name}}
+                        </div>
+                        <div class="card-body">
+                            <div class="form-check" v-for="item in filter.items">
+                                <label>
+                                    <input type="checkbox" v-model="item.checked" v-on:change="change()" name="check">
+                                    <span class="label-text">{{item.name}}</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+            </div>
+            <div class="col-sm-8">
+                    <h3 class="border-bottom">Uçuşlar</h3>
+                    <div class="card" v-for="flight in filtered_items">
+                        <div class="card-header">
+                            {{flight.id}} {{flight.from}} - {{flight.to}}
+                        </div>
+                        <div class="card-body">
+                            <span class="float-left">{{flight.date}}</span>
+                            <span class="float-right">{{flight.airport_name}} | {{flight.airlines_name}}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.5.17/vue.min.js"></script>
+</body>
+<script>
+    Vue.component('dynamic-filter', {
+        template: '#dynamic-filter',
+        data: function () {
+            return {
+                filtered_items: [],
+                flights: [
+                    {
+                        id: 1,
+                        from: "Ankara",
+                        to: "İstanbul",
+                        date: '01.01.2018',
+                        airlines: 2,
+                        airlines_name: "Pegasus",
+                        airport: 1,
+                        airport_name: "Sabiha Gökçen"
+                    },
+                    {
+                        id: 2,
+                        from: "Ankara",
+                        to: "İstanbul",
+                        date: '01.01.2018',
+                        airlines: 1,
+                        airlines_name: "THY",
+                        airport: 1,
+                        airport_name: "Sabiha Gökçen"
+                    },
+                    {
+                        id: 3,
+                        from: "Ankara",
+                        to: "İstanbul",
+                        date: '01.01.2018',
+                        airlines: 1,
+                        airlines_name: "THY",
+                        airport: 2,
+                        airport_name: "Atatürk"
+                    },
+                    {
+                        id: 4,
+                        from: "Ankara",
+                        to: "İstanbul",
+                        date: '01.01.2018',
+                        airlines: 2,
+                        airlines_name: "Pegasus",
+                        airport: 2,
+                        airport_name: "Atatürk"
+                    },
+
+                ],
+                filters: [
+                    {
+                        name: "Havalimanları",
+                        items: [
+                            {
+                                type: "airport",
+                                value: 1,
+                                name: "Sabiha Gökçen",
+                                checked: false
+                            },
+                            {
+                                type: "airport",
+                                value: 2,
+                                name: "Atatürk Havalimanı",
+                                checked: false
+                            }
+                        ]
+                    },
+                    {
+                        name: "Havayolları",
+                        items: [
+                            {
+                                type: "airlines",
+                                value: 1,
+                                name: "THY",
+                                checked: false
+                            },
+                            {
+                                type: "airlines",
+                                value: 2,
+                                name: "Pegasus",
+                                checked: false
+                            }
+                        ]
+                    }
+                ]
+
+            };
+        },
+        mounted: function () {
+            this.filtered_items = this.flights;
+        },
+        methods: {
+            change: function () {
+
+                var filtered = [];
+                // filtered = this.flights;
+
+                var items = [];
+                this.filters.forEach(filter => {
+                    filter.items.forEach(item => {
+                        if (item.checked) {
+                            items.push(item);
+                        }
+                    })
+                })
+
+                if (items.length == 0) {
+                    this.filtered_items = this.flights;
+                }
+                else {
+
+                    this.filtered_items = this.flights.filter(x => {
+
+                        var b = true;
+                        items.forEach(item => {
+                            console.log(item);
+                            if (x[item.type] != item.value) {
+                                b = false;
+                            } 
+                        });
+
+                        return b;
+
+                    });
+                }
+
+            }
+        }
+    });
+    var app = new Vue({
+        el: '#vue-app'
+    });
+
+
+</script>
+
+</html>
